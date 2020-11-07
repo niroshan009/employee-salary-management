@@ -12,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("users")
@@ -34,11 +36,15 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EmployeeModel>> fetchEmployees(@RequestParam int minSalary, @RequestParam int maxSalary,
-                                                              @RequestParam int offset, @RequestParam int limit,
-                                                              @RequestParam String sort) {
+    public ResponseEntity<Map<String,List<EmployeeModel>>> fetchEmployees(@RequestParam(value ="minSalary",required=true) int minSalary, @RequestParam(value ="maxSalary",required=true) int maxSalary,
+                                                                            @RequestParam(value ="offset",required=true) int offset, @RequestParam(value ="limit",required=true) int limit,
+                                                                            @RequestParam(value ="sort",required=true) String sort) {
         List<EmployeeModel> employeeModelList = employeeSerive.getEmployeeList(minSalary, maxSalary, offset, limit, sort);
-        ResponseEntity<List<EmployeeModel>> responseEntity = new ResponseEntity<>(employeeModelList, HttpStatus.OK);
+        Map<String,List<EmployeeModel>> responseMap = new HashMap<>();
+        responseMap.put("results",employeeModelList);
+
+        ResponseEntity<Map<String,List<EmployeeModel>>> responseEntity = new ResponseEntity<>(responseMap, HttpStatus.OK);
+
         return responseEntity;
     }
 

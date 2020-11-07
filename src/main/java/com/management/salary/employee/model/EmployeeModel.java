@@ -1,25 +1,20 @@
-package com.management.salary.employee.entity;
+package com.management.salary.employee.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.validation.constraints.Digits;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-@Entity
-public class Employee implements Serializable {
+public class EmployeeModel implements Serializable {
 
-    @Id
     private String id;
     private String login;
     private String name;
-    @Digits(integer=10, fraction=2)
     private BigDecimal salary;
 
-    public Employee() {
+    public EmployeeModel() {
     }
 
-    public Employee(String id, String login, String name, @Digits(integer = 10, fraction = 2) BigDecimal salary) {
+    public EmployeeModel(String id, String login, String name, BigDecimal salary) {
         this.id = id;
         this.login = login;
         this.name = name;

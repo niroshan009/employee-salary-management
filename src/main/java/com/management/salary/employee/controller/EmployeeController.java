@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,13 +25,16 @@ public class EmployeeController {
     EmployeeService employeeSerive;
 
     @PostMapping(value = "/upload")
-    public ResponseEntity<String> uploadUsers(@RequestBody List<EmployeeModel> employeeList) {
-        ResponseEntity<String> responseEntity;
-        Iterable<Employee> savedEmployees = employeeSerive.saveEmployee(employeeList);
-        if(savedEmployees.iterator().hasNext()) {
-          responseEntity = new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<Map<String, String>> uploadUsers(@RequestParam("file") MultipartFile file) {
+        ResponseEntity<Map<String, String>> responseEntity;
+        HashMap<String, String> responseBody = new HashMap<>();
+        Iterable<Employee> savedEmployees = employeeSerive.saveEmployee(file);
+        if (null != savedEmployees && savedEmployees.iterator().hasNext()) {
+            responseBody.put("status", "success");
+            responseEntity = new ResponseEntity<>(responseBody, HttpStatus.OK);
         } else {
-            responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            responseBody.put("status", "failure");
+            responseEntity = new ResponseEntity<>(responseBody,HttpStatus.BAD_REQUEST);
         }
         return responseEntity;
     }

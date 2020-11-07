@@ -9,12 +9,12 @@ public class EmployeeModel implements Serializable {
     private String id;
     private String login;
     private String name;
-    private BigDecimal salary;
+    private String salary;
 
     public EmployeeModel() {
     }
 
-    public EmployeeModel(String id, String login, String name, BigDecimal salary) {
+    public EmployeeModel(String id, String login, String name, String salary) {
         this.id = id;
         this.login = login;
         this.name = name;
@@ -45,11 +45,11 @@ public class EmployeeModel implements Serializable {
         this.name = name;
     }
 
-    public BigDecimal getSalary() {
+    public String getSalary() {
         return salary;
     }
 
-    public void setSalary(BigDecimal salary) {
+    public void setSalary(String salary) {
         this.salary = salary;
     }
 }

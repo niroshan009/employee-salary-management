@@ -12,10 +12,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.awt.print.Pageable;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Transactional
@@ -28,9 +35,34 @@ public class EmployeeServiceImpl implements EmployeeService {
     MapperFacade mapperFacade;
 
     @Override
-    public Iterable<Employee> saveEmployee(List<EmployeeModel> employeeModels) {
-        List<Employee> employeeList = mapperFacade.mapAsList(employeeModels, Employee.class);
-        Iterable<Employee> savedEmployees = employeeRepository.saveAll(employeeList);
+    public Iterable<Employee> saveEmployee(MultipartFile file) {
+        Iterable<Employee> savedEmployees = null;
+        BufferedReader br;
+
+        List<Employee> employeeList = new ArrayList<>();
+        try {
+            InputStream is = file.getInputStream();
+            br = new BufferedReader(new InputStreamReader(is));
+            AtomicInteger index = new AtomicInteger();
+            br.lines().forEach(line -> {
+                if (index.get() == 0) {
+                    index.getAndIncrement();
+                    return;
+                } else if (!line.startsWith("#")) {
+                    index.getAndIncrement();
+                    String[] employeeData = line.split(",");
+                    Employee employee = new Employee();
+                    employee.setId(employeeData[0]);
+                    employee.setLogin(employeeData[1]);
+                    employee.setName(employeeData[2]);
+                    employee.setSalary(new BigDecimal(employeeData[3]));
+                    employeeList.add(employee);
+                }
+            });
+            savedEmployees = employeeRepository.saveAll(employeeList);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return savedEmployees;
     }
 
